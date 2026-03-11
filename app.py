@@ -1,24 +1,55 @@
+# app.py
 import streamlit as st
 from google import genai
 import pandas as pd
 import matplotlib.pyplot as plt
 
-st.title("AI Customer Feedback Analyzer")
-st.write("Paste customer reviews below:")
 
-reviews = st.text_area("Customer Reviews", height=200)
+st.set_page_config(page_title="AI Customer Feedback Analyzer", layout="wide")
 
-if st.button("Analyze Feedback"):
+st.markdown(
+    """
+    <style>
+    body {background-color: #f0f2f6;}
+    h2 {font-family: 'Arial', sans-serif;}
+    .stButton>button {background-color:#4A90E2; color:white; font-weight:bold; height:50px; width:100%;}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Header
+st.markdown(
+    """
+    <div style="background-color:#4A90E2;padding:15px;border-radius:10px;margin-bottom:20px;">
+        <h2 style="color:white;text-align:center;">AI Customer Feedback Analyzer</h2>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+col1, col2 = st.columns([3,1])
+
+with col1:
+    reviews = st.text_area("Paste customer reviews below:", height=200)
+
+with col2:
+    
+    st.markdown("<div style='height:80px'></div>", unsafe_allow_html=True)
+    analyze = st.button("Analyze Feedback")
+
+
+if analyze:
     if not reviews.strip():
         st.warning("Please enter at least one review!")
     else:
-        # Split reviews by line
+       
         review_list = [r.strip() for r in reviews.split("\n") if r.strip()]
 
-        # Create Gemini client (reads GEMINI_API_KEY from environment)
+       
         client = genai.Client()
 
-        # Generate overall AI analysis for all reviews
+        
         prompt = f"""
 Analyze the following customer reviews and provide:
 1. Overall sentiment
@@ -33,10 +64,10 @@ Reviews:
             contents=prompt
         )
 
-        st.subheader("AI Analysis")
-        st.write(response.text)
+        with st.expander("See AI Analysis"):
+            st.write(response.text)
 
-        # --- Generate sentiment counts for chart ---
+       
         pos_count = 0
         neg_count = 0
         neu_count = 0
@@ -55,15 +86,21 @@ Reviews:
             else:
                 neu_count += 1
 
-        # Create chart
+       
         data = {
             "Sentiment": ["Positive", "Negative", "Neutral"],
             "Count": [pos_count, neg_count, neu_count]
         }
         df = pd.DataFrame(data)
 
-        fig, ax = plt.subplots()
-        ax.bar(df["Sentiment"], df["Count"], color=["green", "red", "gray"])
+    
+        fig, ax = plt.subplots(figsize=(4,3))  
+        ax.bar(df["Sentiment"], df["Count"], color=["#4A90E2", "#FF6B6B", "#B0B0B0"])  # blue, red, gray
         ax.set_ylabel("Number of Reviews")
         ax.set_title("Sentiment Analysis Chart")
         st.pyplot(fig)
+
+        
+        st.info("Tip: Paste one review per line for best results!")
+        st.success("AI analysis is complete!")
+        st.warning("If many reviews are entered, analysis may take a few seconds.")
