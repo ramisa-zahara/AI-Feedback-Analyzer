@@ -47,7 +47,7 @@ if analyze:
         review_list = [r.strip() for r in reviews.split("\n") if r.strip()]
 
 
-        client = genai.Client(api_key=st.secrets["AIzaSyB49U-9-BpyGd2M4ubXIJz5ZgfkgWrdRcg"])
+        client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
         
         prompt = f"""
