@@ -76,7 +76,7 @@ streamlit run app.py
 
 ## Deployment
 
-This application can be deployed on **Vercel** or any cloud platform that supports Python.
+This application can be deployed on **Streamlit** or any cloud platform that supports Python.
 
 ### Deploy on Vercel
 
